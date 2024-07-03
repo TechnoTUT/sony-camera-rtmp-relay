@@ -1,0 +1,3 @@
+[submodule "nginx-rtmp-module"]
+	path = nginx-rtmp-module
+	url = https://github.com/TechnoTUT/nginx-rtmp-module.git
