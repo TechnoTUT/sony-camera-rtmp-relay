@@ -1,13 +1,14 @@
-FROM almalinux:9
+FROM debian:12
 
 LABEL maintainer="TechnoTUT <gh@technotut.net>"
 
-EXPOSE 53
 EXPOSE 53/udp
 
-RUN dnf update -y \
-    && dnf install -y dnsmasq \
-    && dnf clean all
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update -y && apt-get upgrade -y \
+    && apt-get install -y dnsmasq \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY dns/dnsmasq.conf /etc/dnsmasq.conf
 COPY dns/hosts-dnsmasq /etc/hosts-dnsmasq
