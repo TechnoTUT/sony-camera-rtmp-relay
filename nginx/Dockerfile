@@ -7,6 +7,8 @@ EXPOSE 80
 
 ENV DEBIAN_FRONTEND noninteractive
 
+COPY nginx/entrypoint.sh /entrypoint.sh
+
 RUN apt-get update -y && apt-get upgrade -y \
     && apt-get install -y nginx \
     git wget tar build-essential libperl-dev libgeoip-dev libgd-dev libpcre3 libpcre3-dev libxml2 libxslt1-dev libxslt1.1 libxslt1-dev \
@@ -29,9 +31,10 @@ RUN apt-get update -y && apt-get upgrade -y \
     && rm -rf /tmp/nginx-1.22.1 /tmp/openssl-3.3.1 /tmp/nginx-rtmp-module \
     && mkdir -p /var/www/ustream/users/self && chown -R www-data:www-data /var/www/ustream \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+    && ln -sf /dev/stderr /var/log/nginx/error.log \
+    && chmod +x /entrypoint.sh
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/channels.json /var/www/ustream/users/self/channels.json
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/entrypoint.sh"]

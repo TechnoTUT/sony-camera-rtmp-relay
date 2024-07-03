@@ -17,3 +17,5 @@ services:
     ports:
       - "8080:80"
       - "1935:1935"
+    environment:
+      - SERVER_URL=rtmp://10.33.0.1:1935/live/test
