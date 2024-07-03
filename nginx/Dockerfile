@@ -8,6 +8,7 @@ EXPOSE 80
 ENV DEBIAN_FRONTEND noninteractive
 
 COPY nginx/nginx-rtmp-module/ /tmp/nginx-rtmp-module/
+COPY nginx/nginx-rtmp-module/config /tmp/nginx-rtmp-module/config
 
 RUN apt-get update -y && apt-get upgrade -y \
     && apt-get install -y nginx \
