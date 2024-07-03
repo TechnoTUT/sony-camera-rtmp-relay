@@ -13,5 +13,5 @@ services:
     container_name: nginx
     image: ghcr.io/technotut/sonycam-nginx:main
     ports:
-      - "0080:80"
+      - "8080:80"
       - "1935:1935"
