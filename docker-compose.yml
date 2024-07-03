@@ -2,9 +2,7 @@ version: '3'
 services:
   dns:
     container_name: dns
-    build:
-      context: .
-      dockerfile: dns/Dockerfile
+    image: ghcr.io/technotut/sonycam-dns:main
     ports:
       - "53:53/udp"
       - "53:53/tcp"
@@ -15,5 +13,5 @@ services:
     container_name: nginx
     image: ghcr.io/technotut/sonycam-nginx:main
     ports:
-      - "10080:80"
+      - "0080:80"
       - "1935:1935"
