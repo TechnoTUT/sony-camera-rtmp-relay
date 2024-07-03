@@ -16,7 +16,8 @@
 		"github.github-vscode-theme",
 		"github.vscode-pull-request-github",
 		"eamodio.gitlens",
-		"ms-azuretools.vscode-docker"
+		"ms-azuretools.vscode-docker",
+		"github.vscode-github-actions"
 		],
 		"settings": {
 			"workbench.colorTheme": "GitHub Dark Default"
