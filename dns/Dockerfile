@@ -15,4 +15,6 @@ RUN apt-get update -y && apt-get upgrade -y \
 COPY dns/dnsmasq.conf /etc/dnsmasq.conf
 COPY dns/entrypoint.sh /entrypoint.sh
 
+RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT [ "/entrypoint.sh" ]
