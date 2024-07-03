@@ -24,7 +24,7 @@ RUN apt-get update -y && apt-get upgrade -y \
      --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic \
      --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic \
      --add-dynamic-module=/tmp/nginx-rtmp-module --with-openssl=/tmp/openssl-3.3.1 \
-    && mkdir -p /usr/lib/nginx/modules && cp objs/*.so /usr/lib/nginx/modules \
+    && mkdir -p /usr/lib/nginx/modules && cp /tmp/nginx-1.22.1/objs/*.so /usr/lib/nginx/modules \
     && rm -rf /tmp/nginx-1.22.1 /tmp/openssl-3.3.1 /tmp/nginx-rtmp-module
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
