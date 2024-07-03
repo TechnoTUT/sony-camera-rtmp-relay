@@ -3,16 +3,16 @@ FROM debian:12
 LABEL maintainer="TechnoTUT <gh@technotut.net>"
 
 EXPOSE 53/udp
+EXPOSE 53/tcp
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y dnsmasq \
+    && apt-get install -y dnsmasq dnsutils \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd -r dnsmasq && usermod -a -G dnsmasq dnsmasq
 
 COPY dns/dnsmasq.conf /etc/dnsmasq.conf
-COPY dns/hosts-dnsmasq /etc/hosts-dnsmasq
-COPY dns/hosts-resolv.conf /etc/hosts-resolv.conf
+COPY dns/entrypoint.sh /entrypoint.sh
 
-CMD ["dnsmasq", "--no-daemon", "--log-queries", "--log-facility=-"]
+ENTRYPOINT [ "/entrypoint.sh" ]
