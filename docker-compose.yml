@@ -1,0 +1,17 @@
+version: '3'
+services:
+  dns:
+    container_name: dns
+    build:
+      context: .
+      dockerfile: dns/Dockerfile
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "10080:80"
