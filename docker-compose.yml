@@ -9,6 +9,8 @@ services:
     environment:
       - STREAM_IP=10.33.71.1
       - UPSTREAM_DNS=192.168.99.1
+    cap_add:
+      - NET_ADMIN
   nginx:
     container_name: nginx
     image: ghcr.io/technotut/sonycam-nginx:main
