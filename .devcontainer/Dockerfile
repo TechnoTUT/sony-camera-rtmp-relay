@@ -9,10 +9,11 @@ WORKDIR /tmp
 
 RUN apt-get update -y && apt-get upgrade -y \
     && apt-get install -y dnsmasq nginx \
-    git wget tar build-essential libperl-dev libgeoip-dev libgd-dev \
+    git wget tar build-essential libperl-dev libgeoip-dev libgd-dev libpcre3 libpcre3-dev libxml2 libxslt1-dev libxslt1.1 libxslt1-dev \
     && rm -rf /var/lib/apt/lists/* \
     && cd /tmp && wget https://nginx.org/download/nginx-1.22.1.tar.gz && tar xzf nginx-1.22.1.tar.gz && rm -f nginx-1.22.1.tar.gz \
     && wget https://www.openssl.org/source/openssl-3.3.1.tar.gz && tar xzf openssl-3.3.1.tar.gz && rm -f openssl-3.3.1.tar.gz \
+    && git clone https://github.com/TechnoTUT/nginx-rtmp-module.git \
     && cd /tmp/nginx-1.22.1 \
     && ./configure --with-cc-opt='-g -O2 -ffile-prefix-map=/build/nginx-AoTv4W/nginx-1.22.1=. -fstack-protector-strong -Wformat -Werror=format-security -fPIC -Wdate-time -D_FORTIFY_SOURCE=2' \
      --with-ld-opt='-Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr \
