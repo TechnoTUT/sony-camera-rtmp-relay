@@ -13,6 +13,5 @@ RUN apt-get update -y && apt-get upgrade -y \
 COPY dns/dnsmasq.conf /etc/dnsmasq.conf
 COPY dns/hosts-dnsmasq /etc/hosts-dnsmasq
 COPY dns/hosts-resolv.conf /etc/hosts-resolv.conf
-COPY dns/dnssec.conf /etc/dnsmasq.d/dnssec.conf
 
 CMD ["dnsmasq", "--no-daemon", "--log-queries", "--log-facility=-"]
