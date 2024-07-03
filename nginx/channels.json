@@ -1,0 +1,9 @@
+{
+    "channels": {
+        "12345678": {
+            "broadcast_urls": [
+                "rtmp://api.ustream.tv/mystream"
+            ]
+        }
+    }
+}

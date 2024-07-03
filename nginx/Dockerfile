@@ -26,8 +26,12 @@ RUN apt-get update -y && apt-get upgrade -y \
      --add-dynamic-module=/tmp/nginx-rtmp-module --with-openssl=/tmp/openssl-3.3.1 \
     && make modules \
     && mkdir -p /usr/lib/nginx/modules && cp /tmp/nginx-1.22.1/objs/*.so /usr/lib/nginx/modules \
-    && rm -rf /tmp/nginx-1.22.1 /tmp/openssl-3.3.1 /tmp/nginx-rtmp-module
+    && rm -rf /tmp/nginx-1.22.1 /tmp/openssl-3.3.1 /tmp/nginx-rtmp-module \
+    && mkdir -p /var/www/ustream/users/self && chown -R www-data:www-data /var/www/ustream \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/channels.json /var/www/ustream/users/self/channels.json
 
 CMD ["nginx", "-g", "daemon off;"]
