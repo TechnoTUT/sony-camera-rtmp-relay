@@ -37,4 +37,4 @@ RUN apt-get update -y && apt-get upgrade -y \
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/channels.json /var/www/ustream/users/self/channels.json
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
