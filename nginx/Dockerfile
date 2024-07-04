@@ -34,7 +34,7 @@ RUN apt-get update -y && apt-get upgrade -y \
     && ln -sf /dev/stderr /var/log/nginx/error.log \
     && chmod +x /entrypoint.sh
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY nginx/channels.json /var/www/ustream/users/self/channels.json
 
 CMD ["/entrypoint.sh"]
