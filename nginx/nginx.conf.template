@@ -84,6 +84,11 @@ http {
 
             location /stat {
                 rtmp_stat all;
+				rtmp_stat_stylesheet stat.xsl;
             }
+
+			location /stat.xsl {
+				root /var/www/ustream/;
+			}
 	}
 }
