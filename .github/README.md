@@ -125,7 +125,14 @@ pmca-console-v0.18-win.exe stream -w stream.cfg
 ### 3. Configure your network
 Configure your DHCP server to change the DNS server to the IP address of the dns container.  
 
-### 4. Start the containers
+### 4. Change container settings
+Change the `docker-compose.yml` and `dns/Corefile` file to match your network settings.
+After changing the settings, you need to rebuild the image.
+```bash
+docker-compose build
+```
+
+### 5. Start the containers
 ```bash
 git clone https://github.com/technotut/sony-camera-rtmp-relay.git && cd sony-camera-rtmp-relay
 docker-compose up -d
@@ -136,6 +143,6 @@ Stream server IP address is hardcoded in the `nginx.conf` file. If you change th
 
 You want local streaming server, you can use [TechnoTUT/rtmp-live-server](https://github.com/TechnoTUT/rtmp-live-server).
 
-### 5. Start streaming
+### 6. Start streaming
 Start streaming from your camera.  
 You can check the streaming status by accessing the `http://<nginx-container_IPaddress>/stat`

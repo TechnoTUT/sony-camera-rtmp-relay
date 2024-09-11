@@ -1,16 +1,10 @@
-version: '3'
 services:
   dns:
     container_name: dns
-    image: ghcr.io/technotut/sonycam-dns:main
+    build: ./dns
     ports:
       - "53:53/udp"
-      - "53:53/tcp"
-    environment:
-      - STREAM_IP=10.33.71.1
-      - UPSTREAM_DNS=192.168.99.1
-    cap_add:
-      - NET_ADMIN
+      - "53:53"
   nginx:
     container_name: nginx
     image: ghcr.io/technotut/sonycam-nginx:main

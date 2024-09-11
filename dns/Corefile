@@ -1,0 +1,13 @@
+.:53 {
+      errors
+      health
+      hosts {
+        10.33.71.1 api.ustream.tv
+        fallthrough
+      }
+      ready
+      forward . 192.168.99.1
+      loop
+      reload
+      loadbalance
+    }
