@@ -1,4 +1,4 @@
-FROM debian:12
+FROM debian:12 as build
 
 LABEL maintainer="TechnoTUT <gh@technotut.net>"
 
@@ -7,10 +7,8 @@ EXPOSE 80
 
 ENV DEBIAN_FRONTEND noninteractive
 
-COPY nginx/entrypoint.sh /entrypoint.sh
-
 RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y nginx \
+    && apt-get install -y nginx=1.22.1-9 \
     git wget tar build-essential libperl-dev libgeoip-dev libgd-dev libpcre3 libpcre3-dev libxml2 libxslt1-dev libxslt1.1 libxslt1-dev gettext-base \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /tmp && cd /tmp && wget https://nginx.org/download/nginx-1.22.1.tar.gz && tar xzf nginx-1.22.1.tar.gz && rm -f nginx-1.22.1.tar.gz \
@@ -26,15 +24,21 @@ RUN apt-get update -y && apt-get upgrade -y \
      --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic \
      --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic \
      --add-dynamic-module=/tmp/nginx-rtmp-module --with-openssl=/tmp/openssl-3.3.1 \
-    && make modules \
-    && mkdir -p /usr/lib/nginx/modules && cp /tmp/nginx-1.22.1/objs/*.so /usr/lib/nginx/modules \
-    && cp /tmp/rtmp-nginx-module/stat.xsl /var/www/ustream/stat.xsl \
-    && rm -rf /tmp/nginx-1.22.1 /tmp/openssl-3.3.1 /tmp/nginx-rtmp-module \
-    && mkdir -p /var/www/ustream/users/self && chown -R www-data:www-data /var/www/ustream \
+    && make modules
+
+FROM debian:12-slim
+COPY nginx/entrypoint.sh /entrypoint.sh
+RUN apt-get update -y && apt-get upgrade -y \
+    && apt-get install -y nginx=1.22.1-9 gettext-base \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /usr/lib/nginx/modules \
+    && mkdir -p /var/www/ustream/users/self \
+    && chown -R www-data:www-data /var/www/ustream \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log \
     && chmod +x /entrypoint.sh
-
+COPY --from=build /tmp/nginx-1.22.1/objs/*.so /usr/lib/nginx/modules
+COPY --from=build /tmp/nginx-rtmp-module/stat.xsl /var/www/ustream/stat.xsl
 COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY nginx/channels.json /var/www/ustream/users/self/channels.json
 
