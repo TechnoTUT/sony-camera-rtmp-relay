@@ -1,6 +1,6 @@
 # Sony-Camera-RTMP-Relay
 This is containers for Sony Camera RTMP Relay. We use it for DJ Production.  
-We are running this container on a k3s cluster. For more information on operating with Kubernetes, see [TechnoTUT/k3s](https://github.com/TechnoTUT/k3s).
+We are running this container on a Kubernetes cluster. For more information on operating with Kubernetes, see [TechnoTUT/Infra](https://github.com/TechnoTUT/Infra).
 
 ## Special Thanks
 Thanks to ma1co/OpenMemories and the following issues for giving us the knowledge.  
