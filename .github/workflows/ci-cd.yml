@@ -68,7 +68,6 @@ jobs:
         run: |
           platform="${{ matrix.platform }}"
           echo "clean=${platform//\//-}" >> $GITHUB_OUTPUT
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
