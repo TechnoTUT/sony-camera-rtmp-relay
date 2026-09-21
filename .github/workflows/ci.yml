@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose config
+        run: |
+          cp .env.example .env
+          docker compose config
+
+      - name: Validate CoreDNS configuration
+        run: |
+          docker run --rm -v "$(pwd)/dns/Corefile:/etc/coredns/Corefile:ro" \
+            -e RELAY_IP=127.0.0.1 -e UPSTREAM_DNS=1.1.1.1 \
+            coredns/coredns:latest -conf /etc/coredns/Corefile &
+          PID=$!
+          sleep 2
+          kill $PID || true

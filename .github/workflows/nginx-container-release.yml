@@ -7,8 +7,10 @@ on:
     branches:
       - main
     paths-ignore:
+      - 'README.md'
       - 'LICENSE'
       - 'stream.cfg'
+      - '.env*'
       - 'dns/**'
       - '.devcontainer/**'
       - '.github/**'
