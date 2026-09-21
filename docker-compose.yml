@@ -3,13 +3,22 @@ services:
     container_name: dns
     build: ./dns
     ports:
-      - "53:53/udp"
-      - "53:53"
+      - "${DNS_PORT:-53}:53/udp"
+      - "${DNS_PORT:-53}:53"
+    environment:
+      - RELAY_IP=${RELAY_IP:-10.33.71.1}
+      - UPSTREAM_DNS=${UPSTREAM_DNS:-1.1.1.1}
+    restart: unless-stopped
+
   nginx:
     container_name: nginx
     image: ghcr.io/technotut/sonycam-nginx:main
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     ports:
-      - "8080:80"
-      - "1935:1935"
+      - "${HTTP_PORT:-8080}:80"
+      - "${RTMP_PORT:-1935}:1935"
     environment:
-      - SERVER_URL=rtmp://10.33.0.1:1935/live/test
+      - SERVER_URL=${SERVER_URL:-rtmp://10.33.0.1:1935/live/test}
+    restart: unless-stopped

@@ -56,26 +56,29 @@ Change the DNS server address to the server's IP address.
 git clone https://github.com/technotut/sony-camera-rtmp-relay.git && cd sony-camera-rtmp-relay
 ```
 
-### 5. Change container settings
-Change the `docker-compose.yml` and `dns/Corefile` file to match your network settings.
-After changing the settings, you need to rebuild the image.
+### 5. Configure environment variables
+Copy `.env.example` to `.env` and edit it to match your network settings:
 ```bash
-docker-compose build
+cp .env.example .env
+vi .env
 ```
+Key configuration items:
+- `SERVER_URL`: Destination RTMP server URL (e.g., `rtmp://<target-ip>:1935/live/test`).
+- `RELAY_IP`: IP address of this relay host reachable from the camera (resolves `api.ustream.tv`).
+- `UPSTREAM_DNS`: Upstream DNS server for forwarding non-target queries (defaults to `1.1.1.1`).
+- `HTTP_PORT`, `RTMP_PORT`, `DNS_PORT`: (Optional) Host port mappings.
 
 ### 6. Start the containers
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
-If you don't use the default port, you need to change the port in the `docker-compose.yml` file.
-Also, you need to change the stream IP address (nginx container address) and upstream dns server address in the `docker-compose.yml` file.  
-Stream server IP address is hardcoded in the `nginx.conf` file. If you change the IP address, you need to change the `nginx.conf` file. Please rebuild the image or mount the `nginx.conf` file to the container.  
+No image rebuild is required when changing IPs or stream URLs; CoreDNS and Nginx read the configuration directly from environment variables.
 
 You want local streaming server, you can use [TechnoTUT/rtmp-live-server](https://github.com/TechnoTUT/rtmp-live-server).
 
-If you want to stop the containers, you can use the following command.
+If you want to stop the containers, you can use the following command:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### 7. Start streaming
@@ -93,12 +96,9 @@ sudo dnf install -y podman podman-plugins python3-pip git
 pip3 install podman-compose 
 ## Clone this repository
 git clone https://github.com/technotut/sony-camera-rtmp-relay.git && cd sony-camera-rtmp-relay
-## Change the container settings
-## ## Change the "docker-compose.yml" and "dns/Corefile" file to match your network settings.
-## ## After changing the settings, you need to rebuild the image.
-vi docker-compose.yml
-vi dns/Corefile
-podman-compose build
+## Configure environment variables
+cp .env.example .env
+vi .env
 ## Start the containers
 podman-compose up -d
 ```
