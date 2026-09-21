@@ -2,6 +2,31 @@
 This is containers for Sony Camera RTMP Relay. We use it for DJ Production.  
 We are running this container on a Kubernetes cluster. For more information on operating with Kubernetes, see [TechnoTUT/Infra](https://github.com/TechnoTUT/Infra).
 
+## Architecture
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Operator
+    participant Cam as Sony Camera
+    box rgb(40, 50, 60) Sony-Camera-RTMP-Relay
+        participant DNS as CoreDNS (:53)
+        participant HTTP as Nginx HTTP (:80)
+        participant RTMP as Nginx RTMP (:1935)
+    end
+    participant Dest as Target RTMP Server<br/>(SERVER_URL)
+
+    Note over Cam: Configured with stream.cfg
+    User->>Cam: Start Live Streaming
+    Cam->>DNS: DNS Query (api.ustream.tv)
+    DNS-->>Cam: Return Relay Server IP
+    Cam->>HTTP: GET /users/self/channels.json
+    HTTP-->>Cam: Return channels.json<br/>(rtmp://api.ustream.tv/mystream)
+    Cam->>RTMP: RTMP Publish (app: mystream)
+    RTMP->>Dest: RTMP Relay (Push to SERVER_URL)
+    Note over Cam,Dest: Video streaming continues in real-time
+```
+
 ## Special Thanks
 Thanks to ma1co/OpenMemories and the following issues for giving us the knowledge.  
 https://github.com/ma1co/OpenMemories-Tweak/issues/224
