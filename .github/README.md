@@ -9,7 +9,7 @@ sequenceDiagram
     autonumber
     actor User as Operator
     participant Cam as Sony Camera
-    box rgb(40, 50, 60) Sony-Camera-RTMP-Relay
+    box Sony-Camera-RTMP-Relay
         participant DNS as CoreDNS (:53)
         participant HTTP as Nginx HTTP (:80)
         participant RTMP as Nginx RTMP (:1935)
