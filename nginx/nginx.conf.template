@@ -6,89 +6,88 @@ error_log /var/log/nginx/error.log;
 load_module /usr/lib/nginx/modules/ngx_rtmp_module.so;
 
 events {
-	worker_connections 768;
-	# multi_accept on;
+    worker_connections 768;
+    # multi_accept on;
 }
 
 rtmp {
-        access_log /var/log/nginx/ustream-rtmp-access.log;
+    access_log /var/log/nginx/ustream-rtmp-access.log;
 
-        server {
-                listen 1935;
-                chunk_size 4096;
-                max_message 5M;
-                ping 20s;
-                ping_timeout 36000s;
-                force_ping on;
+    server {
+        listen 1935;
+        chunk_size 4096;
+        max_message 5M;
+        ping 20s;
+        ping_timeout 36000s;
+        force_ping on;
 
-                application mystream {
-                        live on;
-                        meta off;
+        application mystream {
+            live on;
+            meta off;
 
-                        push ${SERVER_URL};
+            push ${SERVER_URL};
 
-						# Reduce buffer size
-            			wait_key on;
-            			sync 10ms;
-            			drop_idle_publisher 5s;
-                }
+            # Reduce buffer size
+            wait_key on;
+            sync 10ms;
+            drop_idle_publisher 5s;
         }
+    }
 }
 
 http {
+    ##
+    # Basic Settings
+    ##
 
-	##
-	# Basic Settings
-	##
+    sendfile on;
+    tcp_nopush on;
+    types_hash_max_size 2048;
+    # server_tokens off;
 
-	sendfile on;
-	tcp_nopush on;
-	types_hash_max_size 2048;
-	# server_tokens off;
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
 
-	# server_names_hash_bucket_size 64;
-	# server_name_in_redirect off;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
 
-	include /etc/nginx/mime.types;
-	default_type application/octet-stream;
+    ##
+    # SSL Settings
+    ##
 
-	##
-	# SSL Settings
-	##
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+    ssl_prefer_server_ciphers on;
 
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
-	ssl_prefer_server_ciphers on;
+    ##
+    # Logging Settings
+    ##
 
-	##
-	# Logging Settings
-	##
+    access_log /var/log/nginx/access.log;
 
-	access_log /var/log/nginx/access.log;
+    ##
+    # Gzip Settings
+    ##
 
-	##
-	# Gzip Settings
-	##
+    gzip on;
 
-	gzip on;
+    server {
+        listen 80;
+        server_name api.ustream.tv;
 
-	server {
-        	listen 80;
-        	server_name api.ustream.tv;
+        error_log /var/log/nginx/ustream-error.log;
+        access_log /var/log/nginx/ustream-access.log;
 
-        	error_log /var/log/nginx/ustream-error.log;
-        	access_log /var/log/nginx/ustream-access.log;
+        location / {
+            root /var/www/ustream/;
+        }
 
-        	location / {
-                	root /var/www/ustream/;
-        	}
+        location /stat {
+            rtmp_stat all;
+            rtmp_stat_stylesheet stat.xsl;
+        }
 
-            location /stat {
-                rtmp_stat all;
-				rtmp_stat_stylesheet stat.xsl;
-            }
-
-			location /stat.xsl {
-				root /var/www/ustream/;
-			}
-	}
+        location /stat.xsl {
+            root /var/www/ustream/;
+        }
+    }
 }
