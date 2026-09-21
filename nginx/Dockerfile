@@ -1,19 +1,16 @@
 FROM debian:12 as build
 
-LABEL maintainer="TechnoTUT <gh@technotut.net>"
-
-EXPOSE 1935
-EXPOSE 80
-
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y nginx=1.22.1-9 \
-    git wget tar build-essential libperl-dev libgeoip-dev libgd-dev libpcre3 libpcre3-dev libxml2 libxslt1-dev libxslt1.1 libxslt1-dev gettext-base \
+    && apt-get install -y --no-install-recommends \
+    nginx=1.22.1-9 \
+    git wget tar build-essential libperl-dev libgeoip-dev libgd-dev libpcre3 libpcre3-dev libxml2 libxslt1.1 libxslt1-dev gettext-base ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /tmp && cd /tmp && wget https://nginx.org/download/nginx-1.22.1.tar.gz && tar xzf nginx-1.22.1.tar.gz && rm -f nginx-1.22.1.tar.gz \
+    && mkdir -p /tmp && cd /tmp \
+    && wget https://nginx.org/download/nginx-1.22.1.tar.gz && tar xzf nginx-1.22.1.tar.gz && rm -f nginx-1.22.1.tar.gz \
     && wget https://www.openssl.org/source/openssl-3.3.1.tar.gz && tar xzf openssl-3.3.1.tar.gz && rm -f openssl-3.3.1.tar.gz \
-    && git clone https://github.com/TechnoTUT/nginx-rtmp-module.git \
+    && git clone --depth 1 https://github.com/TechnoTUT/nginx-rtmp-module.git \
     && cd /tmp/nginx-1.22.1 \
     && ./configure --with-cc-opt='-g -O2 -ffile-prefix-map=/build/nginx-AoTv4W/nginx-1.22.1=. -fstack-protector-strong -Wformat -Werror=format-security -fPIC -Wdate-time -D_FORTIFY_SOURCE=2' \
      --with-ld-opt='-Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr \
@@ -27,19 +24,29 @@ RUN apt-get update -y && apt-get upgrade -y \
     && make modules
 
 FROM debian:12-slim
-COPY nginx/entrypoint.sh /entrypoint.sh
+
+LABEL maintainer="TechnoTUT <gh@technotut.net>"
+
+EXPOSE 80 1935
+
 RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y nginx=1.22.1-9 gettext-base \
+    && apt-get install -y --no-install-recommends nginx=1.22.1-9 gettext-base curl \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /usr/lib/nginx/modules \
     && mkdir -p /var/www/ustream/users/self \
     && chown -R www-data:www-data /var/www/ustream \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log \
-    && chmod +x /entrypoint.sh
+    && ln -sf /dev/stderr /var/log/nginx/error.log
+
 COPY --from=build /tmp/nginx-1.22.1/objs/*.so /usr/lib/nginx/modules
 COPY --from=build /tmp/nginx-rtmp-module/stat.xsl /var/www/ustream/stat.xsl
 COPY nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY nginx/channels.json /var/www/ustream/users/self/channels.json
+COPY nginx/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:80/users/self/channels.json || exit 1
 
 CMD ["/entrypoint.sh"]
