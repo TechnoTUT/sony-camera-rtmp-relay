@@ -21,15 +21,20 @@ rtmp {
         ping_timeout 36000s;
         force_ping on;
 
+        buflen 100ms;
+        out_queue 512;
+        out_cork 32;
+
         application mystream {
             live on;
             meta off;
 
             push ${SERVER_URL};
 
-            # Reduce buffer size
+            # Reduce buffer size & minimize latency
             wait_key on;
-            sync 10ms;
+            wait_video on;
+            sync 1ms;
             drop_idle_publisher 5s;
         }
     }
