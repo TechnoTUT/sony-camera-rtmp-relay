@@ -114,7 +114,6 @@ jobs:
           name: digests-${{ steps.platform.outputs.clean }}
           path: /tmp/digests/*
           if-no-files-found: error
-          retries: 0
 
   merge-manifests:
     name: Create & Publish Multi-Arch Manifest
