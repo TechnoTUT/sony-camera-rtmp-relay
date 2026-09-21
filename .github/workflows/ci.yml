@@ -32,4 +32,12 @@ jobs:
             coredns/coredns:latest -conf /etc/coredns/Corefile &
           PID=$!
           sleep 2
-          kill $PID || true
+          if ! kill -0 $PID 2>/dev/null; then
+            echo "Error: CoreDNS failed to start with the provided Corefile"
+            exit 1
+          fi
+          kill $PID 2>/dev/null || true
+
+      - name: Test build Nginx container image
+        run: |
+          docker build -t test-nginx -f ./nginx/Dockerfile .
